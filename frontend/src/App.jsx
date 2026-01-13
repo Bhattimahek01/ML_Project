@@ -42,7 +42,7 @@ function App() {
     setLoading(true);
     setResult(null);
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/predict', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/predict`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
