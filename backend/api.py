@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 import pickle
 import numpy as np
 from model import LogisticRegressionScratch
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for React frontend
 
 # Load Model & Scaler
 try:
@@ -11,16 +13,13 @@ try:
         model = pickle.load(f)
     with open("scaler.pkl", "rb") as f:
         scaler_min, scaler_max = pickle.load(f)
+    print("Model loaded successfully!")
 except Exception as e:
     print(f"Error loading model: {e}")
     model = None
     scaler_min, scaler_max = None, None
 
-@app.route('/')
-def home():
-    return render_template('index.html')
-
-@app.route('/predict', methods=['POST'])
+@app.route('/api/predict', methods=['POST'])
 def predict():
     if not model:
         return jsonify({'error': 'Model not loaded'}), 500
@@ -52,7 +51,8 @@ def predict():
         
         return jsonify({
             'probability': float(prob),
-            'prediction': prediction
+            'prediction': prediction,
+            'status': 'success'
         })
 
     except Exception as e:
